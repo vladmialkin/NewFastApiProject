@@ -8,7 +8,8 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 import re
 from fastapi import HTTPException
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr
+from pydantic.functional_validators import field_validator
 
 import settings
 
@@ -70,6 +71,13 @@ class UserCreate(BaseModel):
     name: str
     surname: str
     email: EmailStr
+
+    @field_validator('name', 'surname')
+    @classmethod
+    def validate_name(cls, value: str) -> str:
+        if not LETTER_MATCH_PATTERN.match(value):
+            raise HTTPException(status_code=422, detail="Поле должно содержать только буквы")
+        return value
 
 
 app = FastAPI()
