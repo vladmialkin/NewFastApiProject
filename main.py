@@ -48,4 +48,28 @@ class UserDAL:
         return new_user
 
 
+# API модели Pydantic
+
+LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\-]+$")
+
+
+class TunedModel(BaseModel):
+    class Config:
+        orm_mode = True
+
+
+class ShowUser(TunedModel):
+    user_id: uuid.UUID
+    name: str
+    surname: str
+    email: EmailStr
+    is_active: bool
+
+
+class UserCreate(BaseModel):
+    name: str
+    surname: str
+    email: EmailStr
+
+
 app = FastAPI()
